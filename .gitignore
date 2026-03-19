@@ -1,0 +1,24 @@
+﻿# Build directories
+build/
+cmake-build-*/
+out/
+
+# Generated results
+results/
+*.csv
+*.png
+
+# Compiled binaries
+*.exe
+*.out
+mc_spice
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
