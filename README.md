@@ -3,7 +3,7 @@
 # 1. Go to the project
 
 ## Navigate to project
-cd /c/Users/Abdurraouf/Desktop/monte-carlo-spice
+cd /c/Users/xyz/Desktop/monte-carlo-spice
 
 ## Create build directory
 mkdir -p build && cd build
