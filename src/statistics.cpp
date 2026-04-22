@@ -29,7 +29,7 @@ double Statistics::max(const std::vector<double>& data) {
 }
 
 void Statistics::printSummary(const std::vector<double>& data, const std::string& name) {
-    std::cout << "\n=== " << name << " Statistics ===" << std::endl;
+    std::cout << "\n" << name << " Statistics" << std::endl;
     std::cout << "Mean:   " << mean(data) << std::endl;
     std::cout << "StdDev: " << stddev(data) << std::endl;
     std::cout << "Min:    " << min(data) << std::endl;

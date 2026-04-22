@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cctype>
 
 Parser::Parser(const std::string& filename) : filename(filename) {}
 
@@ -21,11 +22,27 @@ bool Parser::parse() {
         iss >> comp.name;
         comp.type = comp.name[0];
         
-        while (iss >> word) {
-            if (isdigit(word[0]) || word[0] == '-') {
-                comp.params["value"] = std::stod(word);
-            } else if (word != "DC") {
-                comp.nodes.push_back(word);
+        if (comp.name[0] == 'V') {
+            std::string n1, n2, dc;
+            double val;
+            iss >> n1 >> n2 >> dc >> val;
+            comp.nodes.push_back(n1);
+            comp.nodes.push_back(n2);
+            comp.params["value"] = val;
+        } else if (comp.name[0] == 'R') {
+            std::string n1, n2;
+            double val;
+            iss >> n1 >> n2 >> val;
+            comp.nodes.push_back(n1);
+            comp.nodes.push_back(n2);
+            comp.params["value"] = val;
+        } else {
+            while (iss >> word) {
+                if (std::isdigit(word[0]) || word[0] == '-') {
+                    comp.params["value"] = std::stod(word);
+                } else if (word != "DC") {
+                    comp.nodes.push_back(word);
+                }
             }
         }
         

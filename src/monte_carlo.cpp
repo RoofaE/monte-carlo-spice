@@ -34,6 +34,6 @@ std::vector<MonteCarloEngine::Result> MonteCarloEngine::run(const Circuit& circu
         }
     }
     
-    std::cout << "Monte Carlo complete!" << std::endl;
+    std::cout << "Monte Carlo complete" << std::endl;
     return results;
 }

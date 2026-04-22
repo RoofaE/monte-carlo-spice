@@ -22,14 +22,18 @@ int main(int argc, char* argv[]) {
     if (!parser.parse()) return 1;
     
     std::cout << "Parsed " << parser.getComponents().size() << " components" << std::endl;
-    std::cout << "Found " << parser.getNodes().size() << " nodes" << std::endl;
     
     Circuit circuit;
     for (const auto& comp : parser.getComponents()) {
-        if (comp.name[0] == 'V') {
-            if (comp.nodes.size() >= 2 && comp.params.count("value")) {
+        if (comp.name[0] == 'V' && comp.params.count("value")) {
+            if (comp.nodes.size() >= 2) {
                 circuit.addVoltageSource(comp.name, comp.nodes[0], comp.nodes[1], 
                                         comp.params.at("value"));
+            }
+        } else if (comp.name[0] == 'R' && comp.params.count("value")) {
+            if (comp.nodes.size() >= 2) {
+                circuit.addResistor(comp.name, comp.nodes[0], comp.nodes[1],
+                                   comp.params.at("value"));
             }
         }
     }
@@ -48,7 +52,7 @@ int main(int argc, char* argv[]) {
             }
         }
         
-        if (!voltages.empty()) {
+        if (!voltages.empty() && nodeNames[nodeIdx] != "0") {
             std::string nodeName = "V(" + nodeNames[nodeIdx] + ")";
             Statistics::printSummary(voltages, nodeName);
         }
@@ -60,7 +64,7 @@ int main(int argc, char* argv[]) {
     }
     double yield = (100.0 * passed) / results.size();
     
-    std::cout << "\n=== Yield Analysis ===" << std::endl;
+    std::cout << "\nYield Analysis" << std::endl;
     std::cout << "Passed: " << passed << "/" << results.size() << std::endl;
     std::cout << "Yield: " << yield << "%" << std::endl;
     

@@ -1,7 +1,6 @@
 #include "circuit.h"
 
 Circuit::Circuit() {
-    // Ground node is always node 0
     addNode("0");
 }
 
@@ -16,8 +15,14 @@ void Circuit::addVoltageSource(const std::string& name, const std::string& posNo
                               const std::string& negNode, double voltage) {
     addNode(posNode);
     addNode(negNode);
-    // Store voltage source
     voltageSources[name] = {posNode, negNode, voltage};
+}
+
+void Circuit::addResistor(const std::string& name, const std::string& node1,
+                         const std::string& node2, double resistance) {
+    addNode(node1);
+    addNode(node2);
+    resistors[name] = {node1, node2, resistance};
 }
 
 void Circuit::addMOSFET(const std::string& name, const std::string& drain, 
@@ -28,7 +33,6 @@ void Circuit::addMOSFET(const std::string& name, const std::string& drain,
     addNode(gate);
     addNode(source);
     addNode(bulk);
-    // Store MOSFET
 }
 
 int Circuit::getNodeIndex(const std::string& name) const {
