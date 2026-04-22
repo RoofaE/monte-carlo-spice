@@ -2,23 +2,28 @@
 #include "parser.h"
 #include "circuit.h"
 #include "solver.h"
+#include "monte_carlo.h"
+#include "statistics.h"
 
 int main(int argc, char* argv[]) {
     std::cout << "Monte Carlo SPICE Simulator v1.0\n" << std::endl;
     
     if (argc < 2) {
-        std::cout << "Usage: mc_spice <netlist>" << std::endl;
+        std::cout << "Usage: mc_spice <netlist> [iterations]" << std::endl;
         return 1;
     }
     
-    // Parse netlist
+    int iterations = 1000;
+    if (argc >= 3) {
+        iterations = std::stoi(argv[2]);
+    }
+    
     Parser parser(argv[1]);
     if (!parser.parse()) return 1;
     
     std::cout << "Parsed " << parser.getComponents().size() << " components" << std::endl;
     std::cout << "Found " << parser.getNodes().size() << " nodes" << std::endl;
     
-    // Build circuit
     Circuit circuit;
     for (const auto& comp : parser.getComponents()) {
         if (comp.name[0] == 'V') {
@@ -29,22 +34,35 @@ int main(int argc, char* argv[]) {
         }
     }
     
-    std::cout << "\nCircuit has " << circuit.getNumNodes() << " nodes: ";
-    for (const auto& node : circuit.getNodeNames()) {
-        std::cout << node << " ";
-    }
-    std::cout << std::endl;
+    std::cout << "Circuit has " << circuit.getNumNodes() << " nodes" << std::endl;
     
-    // Solve DC operating point
-    Solver solver(circuit);
-    Eigen::VectorXd voltages = solver.solveDC();
+    MonteCarloEngine mc(iterations, 0.10);
+    auto results = mc.run(circuit);
     
-    // Print results
-    std::cout << "\n=== DC Operating Point ===" << std::endl;
     const auto& nodeNames = circuit.getNodeNames();
-    for (int i = 0; i < voltages.size(); i++) {
-        std::cout << "V(" << nodeNames[i] << ") = " << voltages[i] << " V" << std::endl;
+    for (int nodeIdx = 0; nodeIdx < nodeNames.size(); nodeIdx++) {
+        std::vector<double> voltages;
+        for (const auto& result : results) {
+            if (nodeIdx < result.outputVoltages.size()) {
+                voltages.push_back(result.outputVoltages[nodeIdx]);
+            }
+        }
+        
+        if (!voltages.empty()) {
+            std::string nodeName = "V(" + nodeNames[nodeIdx] + ")";
+            Statistics::printSummary(voltages, nodeName);
+        }
     }
+    
+    int passed = 0;
+    for (const auto& result : results) {
+        if (result.passed) passed++;
+    }
+    double yield = (100.0 * passed) / results.size();
+    
+    std::cout << "\n=== Yield Analysis ===" << std::endl;
+    std::cout << "Passed: " << passed << "/" << results.size() << std::endl;
+    std::cout << "Yield: " << yield << "%" << std::endl;
     
     return 0;
 }
