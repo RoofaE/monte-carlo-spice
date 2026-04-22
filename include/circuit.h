@@ -20,6 +20,14 @@ public:
     int getNumNodes() const { return nodeNames.size(); }
     
     const std::vector<std::string>& getNodeNames() const { return nodeNames; }
+    
+    // Simple voltage source storage
+    struct VSource {
+        std::string posNode;
+        std::string negNode;
+        double voltage;
+    };
+    std::map<std::string, VSource> voltageSources;
 
 private:
     std::vector<std::string> nodeNames;
