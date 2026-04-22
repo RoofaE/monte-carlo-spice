@@ -1,21 +1,20 @@
 #include <iostream>
-#include <string>
+#include "parser.h"
 
-int main(int argc, char* argv[]){
-    std::cout << "Monte Carlo SPICE Simulator v1.0" << std::endl;
-    std::cout << "====================================" << std::endl;
-
-    if (argc < 2){
-        std::cout << "Usage: mc_spice <netlist_file>" << std::endl;
+int main(int argc, char* argv[]) {
+    std::cout << "Monte Carlo SPICE Simulator v1.0\n" << std::endl;
+    
+    if (argc < 2) {
+        std::cout << "Usage: mc_spice <netlist>" << std::endl;
         return 1;
     }
-
-    std::string netlistFile = argv[1];
-    std::cout << "Load netlist: " << netlistFile << std::endl;
-
-    // TODO: Add parser, solver, and monte carlo here later
-
-    std::cout << "Parser not added yet" << std::endl;
-
+    
+    Parser parser(argv[1]);
+    if (!parser.parse()) return 1;
+    
+    std::cout << "Parsed " << parser.getComponents().size() << " components" << std::endl;
+    std::cout << "Found " << parser.getNodes().size() << " nodes" << std::endl;
+    
+    std::cout << "\nSolver below" << std::endl;
     return 0;
 }
