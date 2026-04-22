@@ -13,7 +13,7 @@ std::vector<MonteCarloEngine::Result> MonteCarloEngine::run(const Circuit& circu
     std::normal_distribution<> dist(1.0, variationPercent);
     
     std::cout << "\nRunning Monte Carlo with " << numIterations << " iterations..." << std::endl;
-    std::cout << "Variation: ±" << (variationPercent * 100) << "%" << std::endl;
+    std::cout << "Variation: +/-" << (variationPercent * 100) << "%" << std::endl;
     
     for (int i = 0; i < numIterations; i++) {
         Solver solver(circuit);
